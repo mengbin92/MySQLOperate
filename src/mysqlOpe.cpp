@@ -53,7 +53,26 @@ void mysqlOpe::showTables()
         {
             int numRows = mysql_num_rows(m_res);
             int numFields = mysql_num_fields(m_res);
-            cout<<numRows<<"行"<<numFields<<"字段"<<endl;
+            //cout<<numRows<<"行"<<numFields<<"字段"<<endl;
+            
+            //打印表头
+            MYSQL_FIELD *fields;
+            fields = mysql_fetch_fields(m_res);
+            for(int i = 0;i<numFields;++i)
+                cout<<fields[i].name<<" | ";
+            cout<<"\n--------------------"<<endl;
+
+            int j = 1;
+            while(row = mysql_fetch_row(m_res))
+            {
+                int i=0;
+                //cout<<"第"<<j<<"行"<<endl;
+                for(i = 0;i<numFields;++i)
+                    cout<<row[i]<<" | ";
+                cout<<"\n--------------------"<<endl;
+                j++;
+            }
         }
+        mysql_free_result(m_res);
     }
 }
