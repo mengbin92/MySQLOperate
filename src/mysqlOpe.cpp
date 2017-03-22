@@ -54,7 +54,10 @@ void mysqlOpe::showDatabases()
     //获取结果集
     res = mysql_store_result(connect);
     if (res == NULL)
+    {
         cout << "mysql store result error with " << mysql_error(connect) << endl;
+        exit(-1);
+    }
 
     //打印表头
     fields = mysql_fetch_fields(res);
@@ -71,7 +74,6 @@ void mysqlOpe::showDatabases()
     }
 
     mysql_free_result(res);
-
 }
 
 void mysqlOpe::showTables()
@@ -81,6 +83,7 @@ void mysqlOpe::showTables()
 
 mysqlOpe::~mysqlOpe()
 {
+    /*
     if (connect != NULL)
     {
         mysql_close(connect);
@@ -89,8 +92,5 @@ mysqlOpe::~mysqlOpe()
     {
         mysql_free_result(res);
     }
-    if (fields != NULL)
-    {
-        free(fields);
-    }
+    */
 }
