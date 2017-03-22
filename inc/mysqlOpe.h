@@ -21,6 +21,10 @@ public:
     bool connectDB();
     void showDatabases();
     void showTables();
+    void select(string table);
+
+    vector<string> getDatabases();
+    vector<string> getTables();
 
 public:
     MYSQL* connect;

@@ -69,7 +69,12 @@ void mysqlOpe::showDatabases()
     while ((row = mysql_fetch_row(res)))
     {
         for (int i = 0; i < col; ++i)
-            cout << row[i] << " | ";
+        {
+            if(row[i] == NULL)
+                cout<<"NULL | ";
+            else
+                cout << row[i] << " | ";
+        }
         cout << endl;
     }
 
@@ -78,8 +83,153 @@ void mysqlOpe::showDatabases()
 
 void mysqlOpe::showTables()
 {
+    sql.clear();
+    sql = "show tables;";
+    ret = mysql_query(connect, sql.c_str());
+    if (ret != 0)
+        cout << "mysql query error with " << ret << endl;
+
+    //获取列数
+    int col = mysql_field_count(connect);
+
+    //获取结果集
+    res = mysql_store_result(connect);
+    if (res == NULL)
+    {
+        cout << "mysql store result error with " << mysql_error(connect) << endl;
+        exit(-1);
+    }
+
+    //打印表头
+    fields = mysql_fetch_fields(res);
+    for (int i = 0; i < col; ++i)
+        cout << fields[i].name << " | ";
+    cout << endl;
+
+    //输出检索结果
+    while ((row = mysql_fetch_row(res)))
+    {
+        for (int i = 0; i < col; ++i)
+        {
+            if(row[i] == NULL)
+                cout<<"NULL | ";
+            else
+                cout << row[i] << " | ";
+        }
+        cout << endl;
+    }
+
 } 
 
+void mysqlOpe::select(string table)
+{
+    sql.clear();
+    sql = "select * from " + table +";";
+    ret = mysql_query(connect, sql.c_str());
+    if (ret != 0)
+        cout << "mysql query error with " << ret << endl;
+
+    //获取列数
+    int col = mysql_field_count(connect);
+
+    //获取结果集
+    res = mysql_store_result(connect);
+    if (res == NULL)
+    {
+        cout << "mysql store result error with " << mysql_error(connect) << endl;
+        exit(-1);
+    }
+
+    //打印表头
+    fields = mysql_fetch_fields(res);
+    for (int i = 0; i < col; ++i)
+        cout << fields[i].name << " | ";
+    cout << endl;
+
+    //输出检索结果
+    while ((row = mysql_fetch_row(res)))
+    {
+        for (int i = 0; i < col; ++i)
+        {
+            if(row[i] == NULL)
+                cout<<"NULL | ";
+            else
+                cout << row[i] << " | ";
+        }
+        cout << endl;
+    }
+
+}
+
+vector<string> mysqlOpe::getDatabases()
+{
+    vector<string> dataVector;
+    
+    sql.clear();
+    sql = "show databases;";
+    ret = mysql_query(connect, sql.c_str());
+    if (ret != 0)
+        cout << "mysql query error with " << ret << endl;
+
+    //获取列数
+    int col = mysql_field_count(connect);
+
+    //获取结果集
+    res = mysql_store_result(connect);
+    if (res == NULL)
+    {
+        cout << "mysql store result error with " << mysql_error(connect) << endl;
+        exit(-1);
+    }
+
+    //输出检索结果
+    while ((row = mysql_fetch_row(res)))
+    {
+        for (int i = 0; i < col; ++i)
+        {
+            if(row[i] == NULL)
+                dataVector.push_back("NULL");
+            else
+                dataVector.push_back(row[i]);
+        }
+    }
+    return dataVector;
+}
+
+vector<string> mysqlOpe::getTables()
+{
+    vector<string> tableVector;
+    
+    sql.clear();
+    sql = "show databases;";
+    ret = mysql_query(connect, sql.c_str());
+    if (ret != 0)
+        cout << "mysql query error with " << ret << endl;
+
+    //获取列数
+    int col = mysql_field_count(connect);
+
+    //获取结果集
+    res = mysql_store_result(connect);
+    if (res == NULL)
+    {
+        cout << "mysql store result error with " << mysql_error(connect) << endl;
+        exit(-1);
+    }
+
+    //输出检索结果
+    while ((row = mysql_fetch_row(res)))
+    {
+        for (int i = 0; i < col; ++i)
+        {
+            if(row[i] == NULL)
+                tableVector.push_back("NULL");
+            else
+                tableVector.push_back(row[i]);
+        }
+    }
+    return tableVector;
+}
 
 mysqlOpe::~mysqlOpe()
 {
