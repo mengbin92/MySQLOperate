@@ -1,78 +1,96 @@
-#include <iostream>
-#include <string>
-
 #include "../inc/mysqlOpe.h"
+
+#include <string>
 
 using namespace std;
 
+
 mysqlOpe::mysqlOpe()
 {
+
 }
 
-mysqlOpe::~mysqlOpe()
-{
-    if(m_con != NULL)
-        mysql_close(m_con);
-}
-
-mysqlOpe::mysqlOpe(string host,string user,string passwd,string db,int port)
+mysqlOpe::mysqlOpe(string host, string user, string passwd, string dbname, unsigned port)
 {
     m_host = host;
     m_user = user;
     m_passwd = passwd;
-    m_db = db;
+    m_dbname = dbname;
     m_port = port;
-    
-    m_con = mysql_init(NULL);
-    if(NULL == m_con)
+
+    connect = mysql_init(connect);
+    if (NULL == connect)
     {
-        cout<<"mysql init error,errno:"<<mysql_errno(m_con)<<endl;
+        cout << "mysql init error with " << mysql_errno(connect) << endl;
+
     }
+
 }
 
 bool mysqlOpe::connectDB()
 {
-    m_con = mysql_real_connect(m_con,m_host.c_str(),m_user.c_str(),m_passwd.c_str(),m_db.c_str(),m_port,NULL,0);
-    if(NULL == m_con)
+    connect = mysql_real_connect(connect, m_host.c_str(), m_user.c_str(), m_passwd.c_str(), m_dbname.c_str(), m_port, NULL, 0);
+    if (NULL == connect)
     {
-        cout<<"mysql connect error,errno:"<<mysql_errno(m_con)<<endl;
+        cout << "mysql connect error with " << mysql_errno(connect) << endl;
         return false;
+
     }
     return true;
+
+}
+
+void mysqlOpe::showDatabases()
+{
+    sql.clear();
+    sql = "show databases;";
+    ret = mysql_query(connect, sql.c_str());
+    if (ret != 0)
+        cout << "mysql query error with " << ret << endl;
+
+    //获取列数
+    int col = mysql_field_count(connect);
+
+    //获取结果集
+    res = mysql_store_result(connect);
+    if (res == NULL)
+        cout << "mysql store result error with " << mysql_error(connect) << endl;
+
+    //打印表头
+    fields = mysql_fetch_fields(res);
+    for (int i = 0; i < col; ++i)
+        cout << fields[i].name << " | ";
+    cout << endl;
+
+    //输出检索结果
+    while ((row = mysql_fetch_row(res)))
+    {
+        for (int i = 0; i < col; ++i)
+            cout << row[i] << " | ";
+        cout << endl;
+    }
+
+    mysql_free_result(res);
+
 }
 
 void mysqlOpe::showTables()
 {
-    sql.clear();
-    sql = "show tables;";
-    int ret = mysql_query(m_con,sql.c_str());
-    if(!ret)
-    {
-        m_res = mysql_store_result(m_con);
-        if(m_res)
-        {
-            int numRows = mysql_num_rows(m_res);
-            int numFields = mysql_num_fields(m_res);
-            //cout<<numRows<<"行"<<numFields<<"字段"<<endl;
-            
-            //打印表头
-            MYSQL_FIELD *fields;
-            fields = mysql_fetch_fields(m_res);
-            for(int i = 0;i<numFields;++i)
-                cout<<fields[i].name<<" | ";
-            cout<<"\n--------------------"<<endl;
+} 
 
-            int j = 1;
-            while(row = mysql_fetch_row(m_res))
-            {
-                int i=0;
-                //cout<<"第"<<j<<"行"<<endl;
-                for(i = 0;i<numFields;++i)
-                    cout<<row[i]<<" | ";
-                cout<<"\n--------------------"<<endl;
-                j++;
-            }
-        }
-        mysql_free_result(m_res);
+
+mysqlOpe::~mysqlOpe()
+{
+    if (connect != NULL)
+    {
+        mysql_close(connect);
+    }
+    if (res != NULL)
+    {
+        mysql_free_result(res);
+    }
+    if (fields != NULL)
+    {
+        free(fields);
     }
 }

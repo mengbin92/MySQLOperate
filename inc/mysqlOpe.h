@@ -16,21 +16,24 @@ public:
     mysqlOpe();
     ~mysqlOpe();
 
-    mysqlOpe(string host,string user,string passwd,string db,int port = 3306);
+    mysqlOpe(string host,string user,string passwd,string db,unsigned port = 3306);
     
     bool connectDB();
+    void showDatabases();
     void showTables();
-private:
-    MYSQL *m_con;
-    MYSQL_RES *m_res;
+
+public:
+    MYSQL* connect;
+    MYSQL_RES *res;
     MYSQL_ROW row;
+    MYSQL_FIELD* fields;
+    string sql;
+    int ret;
     
     string m_host;
     string m_user;
     string m_passwd;
-    string m_db;
+    string m_dbname;
     int m_port;
 
-public:
-    string sql;
 };
