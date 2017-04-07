@@ -18,21 +18,15 @@ mysqlOpe::mysqlOpe(string host, string user, string passwd, string dbname, unsig
     m_dbname = dbname;
     m_port = port;
 
-    connect = mysql_init(connect);
-    if (NULL == connect)
-    {
-        cout << "mysql init error with " << mysql_errno(connect) << endl;
-
-    }
+    mysql_init(&connect);
 
 }
 
 bool mysqlOpe::connectDB()
 {
-    connect = mysql_real_connect(connect, m_host.c_str(), m_user.c_str(), m_passwd.c_str(), m_dbname.c_str(), m_port, NULL, 0);
-    if (NULL == connect)
+    if(!mysql_real_connect(&connect, m_host.c_str(), m_user.c_str(), m_passwd.c_str(), m_dbname.c_str(), m_port, NULL, 0))
     {
-        cout << "mysql connect error with " << mysql_errno(connect) << endl;
+        cout << "mysql connect error with " << mysql_errno(&connect) << endl;
         return false;
 
     }
@@ -44,18 +38,18 @@ void mysqlOpe::showDatabases()
 {
     sql.clear();
     sql = "show databases;";
-    ret = mysql_query(connect, sql.c_str());
+    ret = mysql_query(&connect, sql.c_str());
     if (ret != 0)
         cout << "mysql query error with " << ret << endl;
 
     //获取列数
-    int col = mysql_field_count(connect);
+    int col = mysql_field_count(&connect);
 
     //获取结果集
-    res = mysql_store_result(connect);
+    res = mysql_store_result(&connect);
     if (res == NULL)
     {
-        cout << "mysql store result error with " << mysql_error(connect) << endl;
+        cout << "mysql store result error with " << mysql_error(&connect) << endl;
         exit(-1);
     }
 
@@ -85,18 +79,18 @@ void mysqlOpe::showTables()
 {
     sql.clear();
     sql = "show tables;";
-    ret = mysql_query(connect, sql.c_str());
+    ret = mysql_query(&connect, sql.c_str());
     if (ret != 0)
         cout << "mysql query error with " << ret << endl;
 
     //获取列数
-    int col = mysql_field_count(connect);
+    int col = mysql_field_count(&connect);
 
     //获取结果集
-    res = mysql_store_result(connect);
+    res = mysql_store_result(&connect);
     if (res == NULL)
     {
-        cout << "mysql store result error with " << mysql_error(connect) << endl;
+        cout << "mysql store result error with " << mysql_error(&connect) << endl;
         exit(-1);
     }
 
@@ -125,18 +119,18 @@ void mysqlOpe::select(string table)
 {
     sql.clear();
     sql = "select * from " + table +";";
-    ret = mysql_query(connect, sql.c_str());
+    ret = mysql_query(&connect, sql.c_str());
     if (ret != 0)
         cout << "mysql query error with " << ret << endl;
 
     //获取列数
-    int col = mysql_field_count(connect);
+    int col = mysql_field_count(&connect);
 
     //获取结果集
-    res = mysql_store_result(connect);
+    res = mysql_store_result(&connect);
     if (res == NULL)
     {
-        cout << "mysql store result error with " << mysql_error(connect) << endl;
+        cout << "mysql store result error with " << mysql_error(&connect) << endl;
         exit(-1);
     }
 
@@ -167,18 +161,18 @@ vector<string> mysqlOpe::getDatabases()
     
     sql.clear();
     sql = "show databases;";
-    ret = mysql_query(connect, sql.c_str());
+    ret = mysql_query(&connect, sql.c_str());
     if (ret != 0)
         cout << "mysql query error with " << ret << endl;
 
     //获取列数
-    int col = mysql_field_count(connect);
+    int col = mysql_field_count(&connect);
 
     //获取结果集
-    res = mysql_store_result(connect);
+    res = mysql_store_result(&connect);
     if (res == NULL)
     {
-        cout << "mysql store result error with " << mysql_error(connect) << endl;
+        cout << "mysql store result error with " << mysql_error(&connect) << endl;
         exit(-1);
     }
 
@@ -202,18 +196,18 @@ vector<string> mysqlOpe::getTables()
     
     sql.clear();
     sql = "show databases;";
-    ret = mysql_query(connect, sql.c_str());
+    ret = mysql_query(&connect, sql.c_str());
     if (ret != 0)
         cout << "mysql query error with " << ret << endl;
 
     //获取列数
-    int col = mysql_field_count(connect);
+    int col = mysql_field_count(&connect);
 
     //获取结果集
-    res = mysql_store_result(connect);
+    res = mysql_store_result(&connect);
     if (res == NULL)
     {
-        cout << "mysql store result error with " << mysql_error(connect) << endl;
+        cout << "mysql store result error with " << mysql_error(&connect) << endl;
         exit(-1);
     }
 
@@ -233,14 +227,8 @@ vector<string> mysqlOpe::getTables()
 
 mysqlOpe::~mysqlOpe()
 {
-    /*
-    if (connect != NULL)
-    {
-        mysql_close(connect);
-    }
     if (res != NULL)
     {
         mysql_free_result(res);
     }
-    */
 }

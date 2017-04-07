@@ -27,7 +27,7 @@ public:
     vector<string> getTables();
 
 public:
-    MYSQL* connect;
+    MYSQL connect;
     MYSQL_RES *res;
     MYSQL_ROW row;
     MYSQL_FIELD* fields;
